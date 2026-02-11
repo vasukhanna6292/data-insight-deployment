@@ -1,4 +1,4 @@
-# app.py - REFINED PROFESSIONAL UI - PRODUCTION READY
+# app.py - PREMIUM PURPLE UI - ALL ISSUES FIXED
 
 import streamlit as st
 import pandas as pd
@@ -7,6 +7,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import io
 import os
+import re
 
 # -----------------------------
 # Page Configuration
@@ -19,7 +20,7 @@ st.set_page_config(
 )
 
 # -----------------------------
-# Custom CSS - Refined Professional Design
+# Custom CSS - Premium Purple Theme
 # -----------------------------
 st.markdown("""
 <style>
@@ -31,27 +32,29 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     
-    /* Main Background - Subtle Gradient */
+    /* Main Background - Purple Gradient */
     .stApp {
-        background: linear-gradient(135deg, #e3e8f5 0%, #d4dff7 50%, #c5d6f9 100%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         background-attachment: fixed;
     }
     
-    /* Content Container - Solid White with Shadow */
+    /* Content Container - White with shadow */
     .main .block-container {
         background: #ffffff;
-        border-radius: 16px;
-        padding: 2.5rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         max-width: 1400px;
         margin: 2rem auto;
     }
     
     /* Header Styling */
     h1 {
-        color: #1a202c;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         font-weight: 800;
-        font-size: 2.8rem !important;
+        font-size: 3rem !important;
         margin-bottom: 0.5rem;
         text-align: center;
         letter-spacing: -0.5px;
@@ -59,33 +62,33 @@ st.markdown("""
     
     .subtitle {
         text-align: center;
-        color: #718096;
-        font-size: 1.15rem;
+        color: #4A5568;
+        font-size: 1.2rem;
         margin-bottom: 2.5rem;
-        font-weight: 400;
+        font-weight: 500;
     }
     
     h2 {
         color: #2D3748;
         font-weight: 700;
-        font-size: 1.75rem !important;
-        margin-top: 2.5rem;
+        font-size: 2rem !important;
+        margin-top: 3rem;
         margin-bottom: 1.5rem;
         padding-bottom: 0.75rem;
-        border-bottom: 3px solid #667eea;
+        border-bottom: 4px solid #667eea;
     }
     
     h3 {
-        color: #4A5568;
-        font-weight: 600;
-        font-size: 1.25rem !important;
+        color: #667eea;
+        font-weight: 700;
+        font-size: 1.4rem !important;
         margin-top: 1.5rem;
         margin-bottom: 1rem;
     }
     
     /* Sidebar Styling */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
+        background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
         padding-top: 2rem;
     }
     
@@ -100,7 +103,7 @@ st.markdown("""
     }
     
     [data-testid="stSidebar"] hr {
-        border-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.15);
         margin: 1.5rem 0;
     }
     
@@ -108,45 +111,45 @@ st.markdown("""
     .feature-badge {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 12px;
+        padding: 1.2rem 1.5rem;
+        border-radius: 15px;
         text-align: center;
-        font-weight: 600;
-        font-size: 0.95rem;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        font-weight: 700;
+        font-size: 1rem;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         transition: all 0.3s ease;
         cursor: default;
     }
     
     .feature-badge:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.45);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
     }
     
     /* Metric Cards */
     [data-testid="stMetric"] {
-        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-        padding: 1.75rem;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        border-left: 5px solid #667eea;
+        background: linear-gradient(135deg, #f8f9ff 0%, #e8ecff 100%);
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        border-left: 6px solid #667eea;
         transition: all 0.3s ease;
     }
     
     [data-testid="stMetric"]:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
     }
     
     [data-testid="stMetricLabel"] {
-        font-weight: 600;
-        color: #4A5568;
-        font-size: 1.05rem;
+        font-weight: 700;
+        color: #2D3748;
+        font-size: 1.1rem;
     }
     
     [data-testid="stMetricValue"] {
-        font-size: 2.5rem !important;
-        font-weight: 800;
+        font-size: 3rem !important;
+        font-weight: 900;
         color: #667eea;
     }
     
@@ -155,224 +158,252 @@ st.markdown("""
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border: none;
-        padding: 0.85rem 2rem;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 1.05rem;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
+        padding: 1rem 2.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         transition: all 0.3s ease;
         width: 100%;
-        letter-spacing: 0.3px;
+        letter-spacing: 0.5px;
     }
     
     .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
         background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    }
-    
-    .stButton > button:active {
-        transform: translateY(0px);
     }
     
     /* File Uploader */
     [data-testid="stFileUploader"] {
-        background: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.3);
         padding: 2rem;
-        border-radius: 12px;
-        border: 2px dashed rgba(255, 255, 255, 0.4);
+        border-radius: 15px;
+        border: 2px dashed rgba(255, 255, 255, 0.5);
         transition: all 0.3s ease;
     }
     
     [data-testid="stFileUploader"]:hover {
-        border-color: rgba(255, 255, 255, 0.6);
-        background: rgba(255, 255, 255, 0.7);
+        border-color: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.4);
     }
     
     /* Text Input */
     .stTextInput > div > div > input {
-        border-radius: 10px;
-        border: 2px solid #E2E8F0;
-        padding: 0.85rem 1.15rem;
-        font-size: 1rem;
+        border-radius: 12px;
+        border: 3px solid #E2E8F0;
+        padding: 1rem 1.25rem;
+        font-size: 1.05rem;
         transition: all 0.3s ease;
         background: #ffffff;
     }
     
     .stTextInput > div > div > input:focus {
         border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
         outline: none;
     }
     
     /* Expander */
     .streamlit-expanderHeader {
-        background: #f7fafc;
-        border-radius: 10px;
-        font-weight: 600;
+        background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+        border-radius: 12px;
+        font-weight: 700;
         color: #2D3748;
-        padding: 0.75rem 1rem;
+        padding: 1rem 1.25rem;
         transition: all 0.3s ease;
-        border: 1px solid #e2e8f0;
+        border: 2px solid #e2e8f0;
     }
     
     .streamlit-expanderHeader:hover {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border-color: transparent;
+        transform: translateX(5px);
     }
     
-    /* Success/Info/Warning Messages */
-    .stSuccess, .stInfo, .stWarning, .stError {
+    /* Success/Info Messages */
+    .stSuccess {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        border-left: 5px solid #28a745;
         border-radius: 10px;
-        padding: 1rem 1.25rem;
-        font-weight: 500;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+    }
+    
+    .stInfo {
+        background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+        border-left: 5px solid #17a2b8;
+        border-radius: 10px;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+    }
+    
+    .stWarning {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        border-left: 5px solid #ffc107;
+        border-radius: 10px;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+    }
+    
+    .stError {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        border-left: 5px solid #dc3545;
+        border-radius: 10px;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
     }
     
     /* Divider */
     hr {
-        margin: 2.5rem 0;
+        margin: 3rem 0;
         border: none;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #cbd5e0, transparent);
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #667eea, transparent);
     }
     
     /* Tabs */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 0.75rem;
+        gap: 1rem;
         background: transparent;
     }
     
     .stTabs [data-baseweb="tab"] {
-        background: #f7fafc;
-        border-radius: 10px;
-        padding: 0.75rem 1.5rem;
-        font-weight: 600;
-        border: 2px solid #e2e8f0;
+        background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        font-weight: 700;
+        border: 3px solid #e2e8f0;
         transition: all 0.3s ease;
-        color: #4A5568;
+        color: #2D3748;
     }
     
     .stTabs [data-baseweb="tab"]:hover {
-        background: #edf2f7;
-        border-color: #cbd5e0;
+        background: linear-gradient(135deg, #e8ecff 0%, #dce4ff 100%);
+        border-color: #667eea;
     }
     
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white !important;
         border-color: transparent;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
     
     /* Dataframe */
     [data-testid="stDataFrame"] {
-        border-radius: 10px;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border: 2px solid #e2e8f0;
     }
     
     /* Info Box */
     .info-box {
-        background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
-        border-left: 5px solid #667eea;
-        padding: 2rem;
-        border-radius: 12px;
-        margin: 1.5rem 0;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+        border-left: 6px solid #667eea;
+        padding: 2.5rem;
+        border-radius: 15px;
+        margin: 2rem 0;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
     }
     
     .info-box h3 {
         color: #667eea;
         margin-top: 0;
-        font-weight: 700;
+        font-weight: 800;
+        font-size: 1.6rem !important;
     }
     
     .info-box p {
-        color: #4A5568;
-        font-size: 1.05rem;
-        line-height: 1.8;
+        color: #2D3748;
+        font-size: 1.15rem;
+        line-height: 2;
         margin: 0;
+        font-weight: 500;
     }
     
     /* Executive Summary Card */
     .executive-summary {
-        background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
-        padding: 2.5rem;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        border-top: 5px solid #667eea;
-        margin: 1.5rem 0;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+        padding: 3rem;
+        border-radius: 15px;
+        box-shadow: 0 6px 25px rgba(102, 126, 234, 0.2);
+        border-top: 6px solid #667eea;
+        margin: 2rem 0;
     }
     
     .executive-summary p {
-        font-size: 1.15rem;
-        line-height: 2;
+        font-size: 1.2rem;
+        line-height: 2.2;
         color: #2D3748;
-        font-weight: 400;
+        font-weight: 500;
     }
     
     /* Chart Container */
     .chart-container {
         background: #ffffff;
-        padding: 1.5rem;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-        margin: 1rem 0;
-        border: 1px solid #e2e8f0;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+        margin: 1.5rem 0;
+        border: 2px solid #e8ecff;
     }
     
     /* Capability Cards */
     .capability-card {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        padding: 2rem;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-        border-left: 4px solid #667eea;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+        padding: 2.5rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+        border-left: 6px solid #667eea;
         height: 100%;
     }
     
     .capability-card h3 {
         color: #667eea;
-        font-weight: 700;
+        font-weight: 800;
         margin-top: 0;
-        margin-bottom: 1.25rem;
+        margin-bottom: 1.5rem;
+        font-size: 1.4rem !important;
     }
     
     .capability-card ul {
-        color: #4A5568;
-        line-height: 2;
-        font-size: 1rem;
+        color: #2D3748;
+        line-height: 2.5;
+        font-size: 1.05rem;
         padding-left: 1.5rem;
+        font-weight: 500;
     }
     
     .capability-card li {
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
     }
     
     /* Footer */
     .footer {
         text-align: center;
-        padding: 2.5rem 1rem;
+        padding: 3rem 1rem;
         margin-top: 4rem;
-        border-top: 2px solid #e2e8f0;
-        color: #718096;
+        border-top: 3px solid #e2e8f0;
+        color: #4A5568;
     }
     
     .footer h3 {
-        color: #2D3748;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         margin-bottom: 1rem;
-        font-weight: 700;
-    }
-    
-    .footer p {
-        margin: 0.5rem 0;
+        font-weight: 800;
+        font-size: 1.8rem !important;
     }
     
     /* Animation */
     @keyframes fadeInUp {
         from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(30px);
         }
         to {
             opacity: 1;
@@ -381,21 +412,41 @@ st.markdown("""
     }
     
     .animate-fade-in {
-        animation: fadeInUp 0.5s ease-out;
+        animation: fadeInUp 0.6s ease-out;
     }
     
-    /* Loading Spinner */
-    .stSpinner > div {
-        border-top-color: #667eea !important;
+    /* Pulse animation */
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
     }
     
-    /* Remove extra padding */
-    .block-container {
-        padding-top: 3rem;
-        padding-bottom: 3rem;
+    .pulse {
+        animation: pulse 2s infinite;
     }
 </style>
 """, unsafe_allow_html=True)
+
+# -----------------------------
+# Helper Function to Clean Markdown
+# -----------------------------
+def clean_markdown_text(text):
+    """Remove markdown formatting like ** and convert to clean HTML"""
+    if not text:
+        return text
+    
+    # Remove ** bold markers
+    text = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', text)
+    # Remove * italic markers
+    text = re.sub(r'\*([^*]+)\*', r'<em>\1</em>', text)
+    # Convert line breaks
+    text = text.replace('\n', '<br>')
+    
+    return text
 
 # -----------------------------
 # Project Imports
@@ -448,7 +499,6 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Help Section
     with st.expander("💡 Quick Guide"):
         st.markdown("""
         **How to Use:**
@@ -457,12 +507,8 @@ with st.sidebar:
         2️⃣ Click 'Run Executive Review'  
         3️⃣ View AI-generated insights  
         4️⃣ Ask natural language questions
-        
-        **Sample Data:**  
-        Use `sample_sales_data.csv` from repository
         """)
     
-    # About Section
     with st.expander("ℹ️ About"):
         st.markdown("""
         **AI Data-to-Insight Agent**
@@ -513,12 +559,6 @@ if uploaded_file and run_analysis:
                 st.error("❌ Analysis Failed")
                 with st.expander("🔍 Error Details"):
                     st.code(response.text[:1000])
-                st.markdown("""
-                **Troubleshooting:**
-                - Check OpenAI API key in deployment settings
-                - Verify CSV format is correct
-                - Review backend logs for errors
-                """)
                 st.stop()
         
         except requests.exceptions.Timeout:
@@ -548,11 +588,15 @@ if st.session_state.analysis_data is not None:
     
     data = st.session_state.analysis_data
 
-    # Executive Summary
+    # Executive Summary - FIXED: No markdown symbols
     st.markdown("<h2>🧠 Executive Judgment</h2>", unsafe_allow_html=True)
+    
+    # Clean the executive summary text
+    clean_summary = clean_markdown_text(data["executive_summary"])
+    
     st.markdown(f"""
     <div class='executive-summary animate-fade-in'>
-        <p>{data["executive_summary"]}</p>
+        <p>{clean_summary}</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -593,17 +637,18 @@ if st.session_state.analysis_data is not None:
         anomaly_result=data["anomalies"]["overall_anomaly"]
     )
     
-    # Chart styling
+    # Chart styling - white background for visibility
     fig_rev.update_layout(
         plot_bgcolor='#ffffff',
         paper_bgcolor='#ffffff',
-        font=dict(family="Inter, sans-serif", size=12, color="#2D3748"),
+        font=dict(family="Inter, sans-serif", size=13, color="#2D3748"),
         hovermode='x unified',
         hoverlabel=dict(
             bgcolor="white",
-            font_size=12,
+            font_size=13,
             font_family="Inter"
-        )
+        ),
+        title=dict(font=dict(size=16, color="#2D3748", family="Inter"))
     )
     
     st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
@@ -626,7 +671,8 @@ if st.session_state.analysis_data is not None:
         fig_country.update_layout(
             plot_bgcolor='#ffffff',
             paper_bgcolor='#ffffff',
-            font=dict(family="Inter, sans-serif", color="#2D3748")
+            font=dict(family="Inter, sans-serif", size=12, color="#2D3748"),
+            title=dict(font=dict(size=14, color="#2D3748"))
         )
         st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
         st.plotly_chart(fig_country, use_container_width=True)
@@ -640,7 +686,8 @@ if st.session_state.analysis_data is not None:
         fig_channel.update_layout(
             plot_bgcolor='#ffffff',
             paper_bgcolor='#ffffff',
-            font=dict(family="Inter, sans-serif", color="#2D3748")
+            font=dict(family="Inter, sans-serif", size=12, color="#2D3748"),
+            title=dict(font=dict(size=14, color="#2D3748"))
         )
         st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
         st.plotly_chart(fig_channel, use_container_width=True)
@@ -650,7 +697,7 @@ if st.session_state.analysis_data is not None:
 
     # Natural Language Query Section
     st.markdown("<h2>💬 Ask Questions About Your Data</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='color: #718096; margin-bottom: 1.5rem; font-size: 1.05rem;'>Use natural language to explore insights interactively</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #4A5568; margin-bottom: 2rem; font-size: 1.1rem; font-weight: 500;'>Use natural language to explore insights interactively</p>", unsafe_allow_html=True)
 
     user_question = st.text_input(
         "Your Question",
@@ -684,17 +731,21 @@ if st.session_state.analysis_data is not None:
                         if not result.get("success", True):
                             st.error(f"❌ Query failed: {result.get('answer', 'Unknown error')}")
                         else:
+                            # Clean answer text
+                            clean_answer = clean_markdown_text(result['answer'])
+                            
                             st.markdown("""
                             <div class='executive-summary animate-fade-in'>
-                                <h3 style='color: #667eea; margin-bottom: 1rem; font-weight: 700;'>✨ Answer</h3>
+                                <h3 style='color: #667eea; margin-bottom: 1.5rem; font-weight: 800;'>✨ Answer</h3>
                             """, unsafe_allow_html=True)
-                            st.markdown(f"<p style='font-size: 1.05rem; line-height: 1.9; color: #2D3748;'>{result['answer']}</p>", unsafe_allow_html=True)
+                            st.markdown(f"<p style='font-size: 1.15rem; line-height: 2; color: #2D3748;'>{clean_answer}</p>", unsafe_allow_html=True)
                             st.markdown("</div>", unsafe_allow_html=True)
                             
                             if result.get("key_insights"):
                                 st.markdown("**📊 Key Findings:**")
                                 for insight in result["key_insights"]:
-                                    st.markdown(f"- {insight}")
+                                    clean_insight = clean_markdown_text(insight)
+                                    st.markdown(f"<p style='margin-left: 1.5rem; font-size: 1.05rem;'>• {clean_insight}</p>", unsafe_allow_html=True)
                             
                             chart_type = result.get("chart_suggestion")
                             data_result = result.get("data")
@@ -716,25 +767,7 @@ if st.session_state.analysis_data is not None:
                                         fig.update_layout(
                                             plot_bgcolor='#ffffff',
                                             paper_bgcolor='#ffffff',
-                                            font=dict(family="Inter")
-                                        )
-                                        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
-                                        st.plotly_chart(fig, use_container_width=True)
-                                        st.markdown("</div>", unsafe_allow_html=True)
-                                    elif "Channel" in df_viz.columns and "wow_pct" in df_viz.columns:
-                                        fig = px.bar(
-                                            df_viz, 
-                                            x="Channel", 
-                                            y="wow_pct",
-                                            title="Channel Performance",
-                                            labels={"wow_pct": "WoW % Change"},
-                                            color="wow_pct",
-                                            color_continuous_scale="RdYlGn"
-                                        )
-                                        fig.update_layout(
-                                            plot_bgcolor='#ffffff',
-                                            paper_bgcolor='#ffffff',
-                                            font=dict(family="Inter")
+                                            font=dict(family="Inter", color="#2D3748")
                                         )
                                         st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
                                         st.plotly_chart(fig, use_container_width=True)
@@ -744,9 +777,6 @@ if st.session_state.analysis_data is not None:
                                 
                                 elif chart_type == "table":
                                     st.dataframe(df_viz, use_container_width=True)
-                                
-                                elif data_result and not isinstance(data_result, list):
-                                    st.metric("Result", f"{data_result:,.2f}" if isinstance(data_result, (int, float)) else data_result)
                             
                             if result.get("follow_up_questions"):
                                 st.markdown("**💡 Related Questions:**")
@@ -754,17 +784,9 @@ if st.session_state.analysis_data is not None:
                                     st.markdown(f"- {fq}")
                     else:
                         st.error(f"❌ Failed to process query")
-                        with st.expander("Error details"):
-                            st.code(query_response.text[:500])
                 else:
                     st.error("❌ No file uploaded")
                     
-            except requests.exceptions.Timeout:
-                st.error("⏱️ Query timed out")
-                
-            except requests.exceptions.ConnectionError:
-                st.error("🔌 Cannot connect to API")
-                
             except Exception as e:
                 st.error(f"❌ Query error: {str(e)}")
 
@@ -897,13 +919,13 @@ else:
 st.markdown("""
 <div class='footer'>
     <h3>AI Data-to-Insight Agent</h3>
-    <p style='color: #4A5568; font-weight: 500;'>
+    <p style='color: #2D3748; font-weight: 600; font-size: 1.05rem;'>
         Built with FastAPI, Streamlit & OpenAI GPT-4 | Production-Ready Architecture
     </p>
-    <p style='color: #718096; font-size: 0.95rem; margin-top: 0.75rem;'>
+    <p style='color: #4A5568; font-size: 1rem; margin-top: 0.75rem;'>
         🚀 Cloud Deployed • 📊 Enterprise-Grade • 🔒 Secure by Design
     </p>
-    <p style='color: #A0AEC0; font-size: 0.9rem; margin-top: 1rem;'>
+    <p style='color: #718096; font-size: 0.95rem; margin-top: 1rem;'>
         © 2026 FirstSource POC | Version 1.0
     </p>
 </div>
