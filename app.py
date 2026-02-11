@@ -1,4 +1,4 @@
-# app.py - PREMIUM ENTERPRISE UI - FULL VERSION
+# app.py - REFINED PROFESSIONAL UI - PRODUCTION READY
 
 import streamlit as st
 import pandas as pd
@@ -7,7 +7,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 import io
 import os
-from datetime import datetime
 
 # -----------------------------
 # Page Configuration
@@ -20,119 +19,135 @@ st.set_page_config(
 )
 
 # -----------------------------
-# Custom CSS - Premium Enterprise Design
+# Custom CSS - Refined Professional Design
 # -----------------------------
 st.markdown("""
 <style>
     /* Import Google Fonts */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
     
     /* Global Styles */
     * {
         font-family: 'Inter', sans-serif;
     }
     
-    /* Main Background Gradient */
+    /* Main Background - Subtle Gradient */
     .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #e3e8f5 0%, #d4dff7 50%, #c5d6f9 100%);
         background-attachment: fixed;
     }
     
-    /* Content Container with Glassmorphism */
+    /* Content Container - Solid White with Shadow */
     .main .block-container {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        max-width: 1400px;
+        margin: 2rem auto;
     }
     
     /* Header Styling */
     h1 {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-weight: 700;
-        font-size: 3rem !important;
+        color: #1a202c;
+        font-weight: 800;
+        font-size: 2.8rem !important;
         margin-bottom: 0.5rem;
         text-align: center;
+        letter-spacing: -0.5px;
+    }
+    
+    .subtitle {
+        text-align: center;
+        color: #718096;
+        font-size: 1.15rem;
+        margin-bottom: 2.5rem;
+        font-weight: 400;
     }
     
     h2 {
         color: #2D3748;
-        font-weight: 600;
-        font-size: 1.8rem !important;
-        margin-top: 2rem;
-        border-left: 5px solid #667eea;
-        padding-left: 1rem;
+        font-weight: 700;
+        font-size: 1.75rem !important;
+        margin-top: 2.5rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 3px solid #667eea;
     }
     
     h3 {
         color: #4A5568;
         font-weight: 600;
-        font-size: 1.3rem !important;
+        font-size: 1.25rem !important;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
     }
     
     /* Sidebar Styling */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
+        padding-top: 2rem;
     }
     
-    [data-testid="stSidebar"] * {
+    [data-testid="stSidebar"] h3 {
         color: #ffffff !important;
+        font-weight: 600;
+        font-size: 1.1rem !important;
     }
     
     [data-testid="stSidebar"] .stMarkdown {
-        color: #ffffff !important;
+        color: #e2e8f0;
+    }
+    
+    [data-testid="stSidebar"] hr {
+        border-color: rgba(255, 255, 255, 0.1);
+        margin: 1.5rem 0;
     }
     
     /* Feature Badges */
     .feature-badge {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 0.8rem 1.5rem;
+        padding: 1rem 1.5rem;
         border-radius: 12px;
         text-align: center;
         font-weight: 600;
         font-size: 0.95rem;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+        cursor: default;
     }
     
     .feature-badge:hover {
         transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.45);
     }
     
     /* Metric Cards */
     [data-testid="stMetric"] {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        border-left: 4px solid #667eea;
-        transition: transform 0.3s ease;
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        padding: 1.75rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border-left: 5px solid #667eea;
+        transition: all 0.3s ease;
     }
     
     [data-testid="stMetric"]:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        transform: translateY(-4px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
     }
     
     [data-testid="stMetricLabel"] {
         font-weight: 600;
         color: #4A5568;
-        font-size: 1rem;
+        font-size: 1.05rem;
     }
     
     [data-testid="stMetricValue"] {
         font-size: 2.5rem !important;
-        font-weight: 700;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+        color: #667eea;
     }
     
     /* Buttons */
@@ -140,93 +155,107 @@ st.markdown("""
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border: none;
-        padding: 0.75rem 2rem;
-        border-radius: 12px;
+        padding: 0.85rem 2rem;
+        border-radius: 10px;
         font-weight: 600;
-        font-size: 1.1rem;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        font-size: 1.05rem;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
         transition: all 0.3s ease;
         width: 100%;
+        letter-spacing: 0.3px;
     }
     
     .stButton > button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
         background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+    
+    .stButton > button:active {
+        transform: translateY(0px);
     }
     
     /* File Uploader */
     [data-testid="stFileUploader"] {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.5);
         padding: 2rem;
-        border-radius: 15px;
-        border: 2px dashed rgba(255, 255, 255, 0.3);
+        border-radius: 12px;
+        border: 2px dashed rgba(255, 255, 255, 0.4);
         transition: all 0.3s ease;
     }
     
     [data-testid="stFileUploader"]:hover {
-        border-color: rgba(255, 255, 255, 0.5);
-        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.7);
     }
     
     /* Text Input */
     .stTextInput > div > div > input {
-        border-radius: 12px;
+        border-radius: 10px;
         border: 2px solid #E2E8F0;
-        padding: 0.75rem 1rem;
+        padding: 0.85rem 1.15rem;
         font-size: 1rem;
         transition: all 0.3s ease;
+        background: #ffffff;
     }
     
     .stTextInput > div > div > input:focus {
         border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+        outline: none;
     }
     
     /* Expander */
     .streamlit-expanderHeader {
-        background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%);
-        border-radius: 12px;
+        background: #f7fafc;
+        border-radius: 10px;
         font-weight: 600;
         color: #2D3748;
+        padding: 0.75rem 1rem;
         transition: all 0.3s ease;
+        border: 1px solid #e2e8f0;
     }
     
     .streamlit-expanderHeader:hover {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
+        border-color: transparent;
     }
     
     /* Success/Info/Warning Messages */
-    .stAlert {
-        border-radius: 12px;
-        border-left: 4px solid;
-        padding: 1rem 1.5rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    .stSuccess, .stInfo, .stWarning, .stError {
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        font-weight: 500;
     }
     
     /* Divider */
     hr {
-        margin: 2rem 0;
+        margin: 2.5rem 0;
         border: none;
         height: 2px;
-        background: linear-gradient(90deg, transparent, #667eea, transparent);
+        background: linear-gradient(90deg, transparent, #cbd5e0, transparent);
     }
     
     /* Tabs */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 1rem;
+        gap: 0.75rem;
         background: transparent;
     }
     
     .stTabs [data-baseweb="tab"] {
-        background: white;
-        border-radius: 12px;
+        background: #f7fafc;
+        border-radius: 10px;
         padding: 0.75rem 1.5rem;
         font-weight: 600;
-        border: 2px solid #E2E8F0;
+        border: 2px solid #e2e8f0;
         transition: all 0.3s ease;
-        color: #2D3748;
+        color: #4A5568;
+    }
+    
+    .stTabs [data-baseweb="tab"]:hover {
+        background: #edf2f7;
+        border-color: #cbd5e0;
     }
     
     .stTabs [aria-selected="true"] {
@@ -237,64 +266,113 @@ st.markdown("""
     
     /* Dataframe */
     [data-testid="stDataFrame"] {
-        border-radius: 12px;
+        border-radius: 10px;
         overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-    
-    /* Loading Spinner */
-    .stSpinner > div {
-        border-top-color: #667eea !important;
-    }
-    
-    /* Caption/Small Text */
-    .stCaption {
-        color: #718096;
-        font-size: 0.95rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     }
     
     /* Info Box */
     .info-box {
-        background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-        border-left: 4px solid #667eea;
-        padding: 1.5rem;
+        background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+        border-left: 5px solid #667eea;
+        padding: 2rem;
         border-radius: 12px;
-        margin: 1rem 0;
+        margin: 1.5rem 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+    
+    .info-box h3 {
+        color: #667eea;
+        margin-top: 0;
+        font-weight: 700;
+    }
+    
+    .info-box p {
+        color: #4A5568;
+        font-size: 1.05rem;
+        line-height: 1.8;
+        margin: 0;
     }
     
     /* Executive Summary Card */
     .executive-summary {
-        background: white;
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        border-top: 4px solid #667eea;
+        background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border-top: 5px solid #667eea;
         margin: 1.5rem 0;
+    }
+    
+    .executive-summary p {
+        font-size: 1.15rem;
+        line-height: 2;
+        color: #2D3748;
+        font-weight: 400;
     }
     
     /* Chart Container */
     .chart-container {
-        background: white;
+        background: #ffffff;
         padding: 1.5rem;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
         margin: 1rem 0;
+        border: 1px solid #e2e8f0;
+    }
+    
+    /* Capability Cards */
+    .capability-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        border-left: 4px solid #667eea;
+        height: 100%;
+    }
+    
+    .capability-card h3 {
+        color: #667eea;
+        font-weight: 700;
+        margin-top: 0;
+        margin-bottom: 1.25rem;
+    }
+    
+    .capability-card ul {
+        color: #4A5568;
+        line-height: 2;
+        font-size: 1rem;
+        padding-left: 1.5rem;
+    }
+    
+    .capability-card li {
+        margin-bottom: 0.5rem;
     }
     
     /* Footer */
     .footer {
         text-align: center;
-        padding: 2rem;
-        margin-top: 3rem;
-        border-top: 2px solid #E2E8F0;
+        padding: 2.5rem 1rem;
+        margin-top: 4rem;
+        border-top: 2px solid #e2e8f0;
         color: #718096;
     }
     
-    /* Animation for elements */
+    .footer h3 {
+        color: #2D3748;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+    
+    .footer p {
+        margin: 0.5rem 0;
+    }
+    
+    /* Animation */
     @keyframes fadeInUp {
         from {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(20px);
         }
         to {
             opacity: 1;
@@ -303,27 +381,18 @@ st.markdown("""
     }
     
     .animate-fade-in {
-        animation: fadeInUp 0.6s ease-out;
+        animation: fadeInUp 0.5s ease-out;
     }
     
-    /* Pulse animation for important elements */
-    @keyframes pulse {
-        0%, 100% {
-            opacity: 1;
-        }
-        50% {
-            opacity: 0.8;
-        }
+    /* Loading Spinner */
+    .stSpinner > div {
+        border-top-color: #667eea !important;
     }
     
-    .pulse {
-        animation: pulse 2s infinite;
-    }
-    
-    /* Code blocks */
-    .stCodeBlock {
-        border-radius: 12px;
-        background: #1a1a2e !important;
+    /* Remove extra padding */
+    .block-container {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -358,14 +427,6 @@ with st.sidebar:
     st.markdown("### 🎯 Control Panel")
     st.markdown("---")
     
-    # API Status Indicator
-    st.markdown(f"""
-    <div style='background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;'>
-        <small style='color: #a0aec0;'>🔗 API Endpoint</small><br>
-        <code style='color: #10b981; font-size: 0.75rem;'>{FASTAPI_BASE_URL}</code>
-    </div>
-    """, unsafe_allow_html=True)
-    
     st.markdown("### 📂 Data Upload")
     uploaded_file = st.file_uploader(
         "Upload CSV File",
@@ -377,7 +438,7 @@ with st.sidebar:
         st.session_state.uploaded_file_content = uploaded_file.read()
         uploaded_file.seek(0)
         
-        st.success("✅ File Loaded Successfully")
+        st.success("✅ File Loaded")
         file_size = len(st.session_state.uploaded_file_content) / 1024
         st.info(f"📊 Size: {file_size:.1f} KB")
     
@@ -398,7 +459,7 @@ with st.sidebar:
         4️⃣ Ask natural language questions
         
         **Sample Data:**  
-        Use `sample_sales_data.csv` from the repository
+        Use `sample_sales_data.csv` from repository
         """)
     
     # About Section
@@ -417,7 +478,7 @@ with st.sidebar:
 # Main Header
 # -----------------------------
 st.markdown("<h1>📊 AI Data-to-Insight Agent</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #718096; font-size: 1.2rem; margin-bottom: 2rem;'>Transform Business Data into Actionable Executive Intelligence</p>", unsafe_allow_html=True)
+st.markdown("<p class='subtitle'>Transform Business Data into Actionable Executive Intelligence</p>", unsafe_allow_html=True)
 
 # Feature Badges
 col1, col2, col3, col4 = st.columns(4)
@@ -453,46 +514,27 @@ if uploaded_file and run_analysis:
                 with st.expander("🔍 Error Details"):
                     st.code(response.text[:1000])
                 st.markdown("""
-                **Troubleshooting Tips:**
-                1. Check if OpenAI API key is set in Render dashboard
-                2. Verify CSV format is correct
-                3. Check backend logs in Render
+                **Troubleshooting:**
+                - Check OpenAI API key in deployment settings
+                - Verify CSV format is correct
+                - Review backend logs for errors
                 """)
                 st.stop()
         
         except requests.exceptions.Timeout:
-            st.error("⏱️ Request Timeout (exceeded 5 minutes)")
-            st.warning("This might happen with very large datasets or slow API responses.")
-            st.info("**Try these solutions:**")
-            st.markdown("""
-            - Use a smaller dataset (< 50,000 rows)
-            - Check your internet connection
-            - Verify OpenAI API credits are available
-            """)
+            st.error("⏱️ Request Timeout")
+            st.warning("Analysis exceeded 5 minutes. Try with a smaller dataset.")
             st.stop()
             
         except requests.exceptions.ConnectionError:
             st.error("🔌 Cannot Connect to Backend")
-            st.error(f"**API URL:** {FASTAPI_BASE_URL}")
-            st.info("**Possible issues:**")
-            st.markdown("""
-            - Backend service is starting up (wait 2-3 minutes)
-            - Backend deployment failed (check Render logs)
-            - Network connectivity issue
-            """)
+            st.info("Backend may be starting up. Wait 2-3 minutes and try again.")
             st.stop()
             
         except Exception as e:
             st.error(f"❌ Unexpected Error")
             with st.expander("🔍 Technical Details"):
                 st.code(str(e))
-            st.warning("**Possible causes:**")
-            st.markdown("""
-            - Invalid CSV format
-            - Missing required columns
-            - Data type issues
-            - OpenAI API errors
-            """)
             st.stop()
 
     st.session_state.analysis_data = response.json()
@@ -510,9 +552,7 @@ if st.session_state.analysis_data is not None:
     st.markdown("<h2>🧠 Executive Judgment</h2>", unsafe_allow_html=True)
     st.markdown(f"""
     <div class='executive-summary animate-fade-in'>
-        <p style='font-size: 1.1rem; line-height: 1.8; color: #2D3748;'>
-            {data["executive_summary"]}
-        </p>
+        <p>{data["executive_summary"]}</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -553,10 +593,10 @@ if st.session_state.analysis_data is not None:
         anomaly_result=data["anomalies"]["overall_anomaly"]
     )
     
-    # Update chart styling for premium look
+    # Chart styling
     fig_rev.update_layout(
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='#ffffff',
+        paper_bgcolor='#ffffff',
         font=dict(family="Inter, sans-serif", size=12, color="#2D3748"),
         hovermode='x unified',
         hoverlabel=dict(
@@ -584,8 +624,8 @@ if st.session_state.analysis_data is not None:
             anomaly_results=data["anomalies"]
         )
         fig_country.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='#ffffff',
+            paper_bgcolor='#ffffff',
             font=dict(family="Inter, sans-serif", color="#2D3748")
         )
         st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
@@ -598,8 +638,8 @@ if st.session_state.analysis_data is not None:
             channel_trends=data["trends"]["channel_trends"]
         )
         fig_channel.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='#ffffff',
+            paper_bgcolor='#ffffff',
             font=dict(family="Inter, sans-serif", color="#2D3748")
         )
         st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
@@ -610,7 +650,7 @@ if st.session_state.analysis_data is not None:
 
     # Natural Language Query Section
     st.markdown("<h2>💬 Ask Questions About Your Data</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='color: #718096; margin-bottom: 1.5rem;'>Use natural language to explore insights interactively</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #718096; margin-bottom: 1.5rem; font-size: 1.05rem;'>Use natural language to explore insights interactively</p>", unsafe_allow_html=True)
 
     user_question = st.text_input(
         "Your Question",
@@ -646,14 +686,10 @@ if st.session_state.analysis_data is not None:
                         else:
                             st.markdown("""
                             <div class='executive-summary animate-fade-in'>
-                                <h3 style='color: #667eea; margin-bottom: 1rem;'>✨ Answer</h3>
+                                <h3 style='color: #667eea; margin-bottom: 1rem; font-weight: 700;'>✨ Answer</h3>
                             """, unsafe_allow_html=True)
-                            st.markdown(result["answer"])
+                            st.markdown(f"<p style='font-size: 1.05rem; line-height: 1.9; color: #2D3748;'>{result['answer']}</p>", unsafe_allow_html=True)
                             st.markdown("</div>", unsafe_allow_html=True)
-                            
-                            if result.get("code_generated"):
-                                with st.expander("🔧 Generated Code (for transparency)"):
-                                    st.code(result["code_generated"], language="python")
                             
                             if result.get("key_insights"):
                                 st.markdown("**📊 Key Findings:**")
@@ -678,8 +714,8 @@ if st.session_state.analysis_data is not None:
                                             color_continuous_scale="RdYlGn"
                                         )
                                         fig.update_layout(
-                                            plot_bgcolor='rgba(0,0,0,0)',
-                                            paper_bgcolor='rgba(0,0,0,0)',
+                                            plot_bgcolor='#ffffff',
+                                            paper_bgcolor='#ffffff',
                                             font=dict(family="Inter")
                                         )
                                         st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
@@ -696,8 +732,8 @@ if st.session_state.analysis_data is not None:
                                             color_continuous_scale="RdYlGn"
                                         )
                                         fig.update_layout(
-                                            plot_bgcolor='rgba(0,0,0,0)',
-                                            paper_bgcolor='rgba(0,0,0,0)',
+                                            plot_bgcolor='#ffffff',
+                                            paper_bgcolor='#ffffff',
                                             font=dict(family="Inter")
                                         )
                                         st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
@@ -713,28 +749,26 @@ if st.session_state.analysis_data is not None:
                                     st.metric("Result", f"{data_result:,.2f}" if isinstance(data_result, (int, float)) else data_result)
                             
                             if result.get("follow_up_questions"):
-                                st.markdown("**💡 You might also want to ask:**")
+                                st.markdown("**💡 Related Questions:**")
                                 for fq in result["follow_up_questions"]:
                                     st.markdown(f"- {fq}")
                     else:
-                        st.error(f"❌ Failed to process query (Status: {query_response.status_code})")
+                        st.error(f"❌ Failed to process query")
                         with st.expander("Error details"):
                             st.code(query_response.text[:500])
                 else:
-                    st.error("❌ No file data found. Please upload a file first.")
+                    st.error("❌ No file uploaded")
                     
             except requests.exceptions.Timeout:
                 st.error("⏱️ Query timed out")
-                st.info("Try a simpler query or check your API connection.")
                 
             except requests.exceptions.ConnectionError:
-                st.error("🔌 Cannot connect to FastAPI")
-                st.info(f"Make sure API is accessible at: {FASTAPI_BASE_URL}")
+                st.error("🔌 Cannot connect to API")
                 
             except Exception as e:
                 st.error(f"❌ Query error: {str(e)}")
 
-    # Example Questions - COMPLETE VERSION WITH ALL YOUR QUESTIONS
+    # Example Questions
     with st.expander("💡 Example Questions You Can Ask"):
         tab1, tab2 = st.tabs(["📊 Pre-Computed Analytics", "🔍 Custom Exploration"])
         
@@ -807,8 +841,8 @@ else:
     # Landing Page
     st.markdown("""
     <div class='info-box animate-fade-in'>
-        <h3 style='color: #667eea; margin-top: 0;'>👋 Welcome to AI Data-to-Insight Agent</h3>
-        <p style='color: #4A5568; font-size: 1.1rem; line-height: 1.8;'>
+        <h3>👋 Welcome to AI Data-to-Insight Agent</h3>
+        <p>
             Upload your CSV file and click <strong>"Run Executive Review"</strong> to generate AI-powered insights.
             This tool automatically analyzes your data, detects anomalies, and provides actionable recommendations.
         </p>
@@ -821,17 +855,17 @@ else:
     
     with col1:
         st.markdown("""
-        <div class='chart-container'>
-            <h3 style='color: #667eea;'>📊 Automated Analytics</h3>
-            <ul style='color: #4A5568; line-height: 2;'>
+        <div class='capability-card'>
+            <h3>📊 Automated Analytics</h3>
+            <ul>
                 <li>Weekly revenue trends</li>
                 <li>Regional performance tracking</li>
                 <li>Channel-level insights</li>
                 <li>Promotion impact analysis</li>
             </ul>
             
-            <h3 style='color: #667eea; margin-top: 1.5rem;'>🔍 Anomaly Detection</h3>
-            <ul style='color: #4A5568; line-height: 2;'>
+            <h3>🔍 Anomaly Detection</h3>
+            <ul>
                 <li>Z-score based detection</li>
                 <li>Statistical validation</li>
                 <li>Automatic alerting</li>
@@ -841,17 +875,17 @@ else:
     
     with col2:
         st.markdown("""
-        <div class='chart-container'>
-            <h3 style='color: #667eea;'>💬 Natural Language Queries</h3>
-            <ul style='color: #4A5568; line-height: 2;'>
+        <div class='capability-card'>
+            <h3>💬 Natural Language Queries</h3>
+            <ul>
                 <li>Pre-computed insights</li>
                 <li>Custom data exploration</li>
                 <li>AI-powered code generation</li>
                 <li>Interactive Q&A</li>
             </ul>
             
-            <h3 style='color: #667eea; margin-top: 1.5rem;'>🧠 AI-Powered Insights</h3>
-            <ul style='color: #4A5568; line-height: 2;'>
+            <h3>🧠 AI-Powered Insights</h3>
+            <ul>
                 <li>Executive summaries</li>
                 <li>Business recommendations</li>
                 <li>Action prioritization</li>
@@ -862,16 +896,14 @@ else:
 # Footer
 st.markdown("""
 <div class='footer'>
-    <h3 style='color: #667eea; margin-bottom: 1rem;'>AI Data-to-Insight Agent</h3>
-    <p style='color: #718096;'>
-        Built with FastAPI, Streamlit & OpenAI GPT-4 | 
-        <strong>Production-Ready Architecture</strong> | 
-        Zero Infrastructure Cost
+    <h3>AI Data-to-Insight Agent</h3>
+    <p style='color: #4A5568; font-weight: 500;'>
+        Built with FastAPI, Streamlit & OpenAI GPT-4 | Production-Ready Architecture
     </p>
-    <p style='color: #A0AEC0; font-size: 0.9rem; margin-top: 0.5rem;'>
-        🚀 Deployed on Cloud • 📊 Enterprise-Grade • 🔒 Secure by Design
+    <p style='color: #718096; font-size: 0.95rem; margin-top: 0.75rem;'>
+        🚀 Cloud Deployed • 📊 Enterprise-Grade • 🔒 Secure by Design
     </p>
-    <p style='color: #CBD5E0; font-size: 0.85rem; margin-top: 1rem;'>
+    <p style='color: #A0AEC0; font-size: 0.9rem; margin-top: 1rem;'>
         © 2026 FirstSource POC | Version 1.0
     </p>
 </div>
