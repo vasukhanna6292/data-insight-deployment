@@ -1,22 +1,335 @@
-# app.py
+# app.py - PREMIUM ENTERPRISE UI - FULL VERSION
 
 import streamlit as st
 import pandas as pd
 import requests
 import plotly.express as px
+import plotly.graph_objects as go
 import io
 import os
+from datetime import datetime
+
 # -----------------------------
 # Page Configuration
 # -----------------------------
 st.set_page_config(
-    page_title="AI Data-to-Insight Agent",
+    page_title="AI Data-to-Insight Agent | FirstSource",
+    page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # -----------------------------
-# Project Imports (UI ONLY)
+# Custom CSS - Premium Enterprise Design
+# -----------------------------
+st.markdown("""
+<style>
+    /* Import Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    /* Global Styles */
+    * {
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Main Background Gradient */
+    .stApp {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-attachment: fixed;
+    }
+    
+    /* Content Container with Glassmorphism */
+    .main .block-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    
+    /* Header Styling */
+    h1 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 700;
+        font-size: 3rem !important;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+    
+    h2 {
+        color: #2D3748;
+        font-weight: 600;
+        font-size: 1.8rem !important;
+        margin-top: 2rem;
+        border-left: 5px solid #667eea;
+        padding-left: 1rem;
+    }
+    
+    h3 {
+        color: #4A5568;
+        font-weight: 600;
+        font-size: 1.3rem !important;
+    }
+    
+    /* Sidebar Styling */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    [data-testid="stSidebar"] * {
+        color: #ffffff !important;
+    }
+    
+    [data-testid="stSidebar"] .stMarkdown {
+        color: #ffffff !important;
+    }
+    
+    /* Feature Badges */
+    .feature-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 0.95rem;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .feature-badge:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+    
+    /* Metric Cards */
+    [data-testid="stMetric"] {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #667eea;
+        transition: transform 0.3s ease;
+    }
+    
+    [data-testid="stMetric"]:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    [data-testid="stMetricLabel"] {
+        font-weight: 600;
+        color: #4A5568;
+        font-size: 1rem;
+    }
+    
+    [data-testid="stMetricValue"] {
+        font-size: 2.5rem !important;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    /* Buttons */
+    .stButton > button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+    
+    /* File Uploader */
+    [data-testid="stFileUploader"] {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        border-radius: 15px;
+        border: 2px dashed rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    [data-testid="stFileUploader"]:hover {
+        border-color: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.15);
+    }
+    
+    /* Text Input */
+    .stTextInput > div > div > input {
+        border-radius: 12px;
+        border: 2px solid #E2E8F0;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .stTextInput > div > div > input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    /* Expander */
+    .streamlit-expanderHeader {
+        background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%);
+        border-radius: 12px;
+        font-weight: 600;
+        color: #2D3748;
+        transition: all 0.3s ease;
+    }
+    
+    .streamlit-expanderHeader:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    /* Success/Info/Warning Messages */
+    .stAlert {
+        border-radius: 12px;
+        border-left: 4px solid;
+        padding: 1rem 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Divider */
+    hr {
+        margin: 2rem 0;
+        border: none;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #667eea, transparent);
+    }
+    
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 1rem;
+        background: transparent;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        background: white;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        border: 2px solid #E2E8F0;
+        transition: all 0.3s ease;
+        color: #2D3748;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white !important;
+        border-color: transparent;
+    }
+    
+    /* Dataframe */
+    [data-testid="stDataFrame"] {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Loading Spinner */
+    .stSpinner > div {
+        border-top-color: #667eea !important;
+    }
+    
+    /* Caption/Small Text */
+    .stCaption {
+        color: #718096;
+        font-size: 0.95rem;
+    }
+    
+    /* Info Box */
+    .info-box {
+        background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+        border-left: 4px solid #667eea;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin: 1rem 0;
+    }
+    
+    /* Executive Summary Card */
+    .executive-summary {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border-top: 4px solid #667eea;
+        margin: 1.5rem 0;
+    }
+    
+    /* Chart Container */
+    .chart-container {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        margin: 1rem 0;
+    }
+    
+    /* Footer */
+    .footer {
+        text-align: center;
+        padding: 2rem;
+        margin-top: 3rem;
+        border-top: 2px solid #E2E8F0;
+        color: #718096;
+    }
+    
+    /* Animation for elements */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .animate-fade-in {
+        animation: fadeInUp 0.6s ease-out;
+    }
+    
+    /* Pulse animation for important elements */
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.8;
+        }
+    }
+    
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+    
+    /* Code blocks */
+    .stCodeBlock {
+        border-radius: 12px;
+        background: #1a1a2e !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# -----------------------------
+# Project Imports
 # -----------------------------
 from viz.charts import (
     plot_weekly_revenue,
@@ -24,13 +337,10 @@ from viz.charts import (
     plot_channel_trends
 )
 
-# UPDATED: Use environment variable for API URL (cloud deployment)
+# API Configuration
 FASTAPI_BASE_URL = os.getenv("FASTAPI_BASE_URL", "http://127.0.0.1:8000")
 FASTAPI_URL_FULL = f"{FASTAPI_BASE_URL}/review/full"
 FASTAPI_URL_QUERY = f"{FASTAPI_BASE_URL}/review/query"
-
-# Display API URL in sidebar for debugging
-st.sidebar.caption(f"🔗 API: {FASTAPI_BASE_URL}")
 
 # -----------------------------
 # Initialize Session State
@@ -42,165 +352,140 @@ if "uploaded_file_content" not in st.session_state:
     st.session_state.uploaded_file_content = None
 
 # -----------------------------
-# Header with Feature Badges
+# Sidebar
 # -----------------------------
-st.title("📊 AI Data-to-Insight Agent")
-st.caption("Weekly Executive Performance Review (Automated)")
+with st.sidebar:
+    st.markdown("### 🎯 Control Panel")
+    st.markdown("---")
+    
+    # API Status Indicator
+    st.markdown(f"""
+    <div style='background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;'>
+        <small style='color: #a0aec0;'>🔗 API Endpoint</small><br>
+        <code style='color: #10b981; font-size: 0.75rem;'>{FASTAPI_BASE_URL}</code>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("### 📂 Data Upload")
+    uploaded_file = st.file_uploader(
+        "Upload CSV File",
+        type=["csv"],
+        help="Upload your sales data in CSV format"
+    )
+    
+    if uploaded_file is not None:
+        st.session_state.uploaded_file_content = uploaded_file.read()
+        uploaded_file.seek(0)
+        
+        st.success("✅ File Loaded Successfully")
+        file_size = len(st.session_state.uploaded_file_content) / 1024
+        st.info(f"📊 Size: {file_size:.1f} KB")
+    
+    st.markdown("---")
+    
+    run_analysis = st.button("🚀 Run Executive Review", use_container_width=True)
+    
+    st.markdown("---")
+    
+    # Help Section
+    with st.expander("💡 Quick Guide"):
+        st.markdown("""
+        **How to Use:**
+        
+        1️⃣ Upload CSV file  
+        2️⃣ Click 'Run Executive Review'  
+        3️⃣ View AI-generated insights  
+        4️⃣ Ask natural language questions
+        
+        **Sample Data:**  
+        Use `sample_sales_data.csv` from the repository
+        """)
+    
+    # About Section
+    with st.expander("ℹ️ About"):
+        st.markdown("""
+        **AI Data-to-Insight Agent**
+        
+        Version: 1.0  
+        Built with: FastAPI + Streamlit  
+        Powered by: OpenAI GPT-4
+        
+        © 2026 FirstSource POC
+        """)
 
-# Feature badges
+# -----------------------------
+# Main Header
+# -----------------------------
+st.markdown("<h1>📊 AI Data-to-Insight Agent</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #718096; font-size: 1.2rem; margin-bottom: 2rem;'>Transform Business Data into Actionable Executive Intelligence</p>", unsafe_allow_html=True)
+
+# Feature Badges
 col1, col2, col3, col4 = st.columns(4)
 with col1:
-    st.markdown("✅ **Analytics Engine**")
+    st.markdown("<div class='feature-badge'>✨ Analytics Engine</div>", unsafe_allow_html=True)
 with col2:
-    st.markdown("✅ **Anomaly Detection**")
+    st.markdown("<div class='feature-badge'>🔍 Anomaly Detection</div>", unsafe_allow_html=True)
 with col3:
-    st.markdown("✅ **Natural Language**")
+    st.markdown("<div class='feature-badge'>💬 Natural Language</div>", unsafe_allow_html=True)
 with col4:
-    st.markdown("✅ **AI Insights**")
+    st.markdown("<div class='feature-badge'>🧠 AI Insights</div>", unsafe_allow_html=True)
 
-st.markdown("---")
-
-# -----------------------------
-# Sidebar Controls
-# -----------------------------
-st.sidebar.header("📂 Data Input")
-
-uploaded_file = st.sidebar.file_uploader(
-    "Upload weekly sales data (CSV)",
-    type=["csv"],
-    help="Upload CSV file with transaction data"
-)
-
-# Store uploaded file in session state
-if uploaded_file is not None:
-    # Read file content and store in session state
-    st.session_state.uploaded_file_content = uploaded_file.read()
-    uploaded_file.seek(0)  # Reset file pointer
-    
-    # Show file info
-    st.sidebar.success(f"✅ File loaded: {uploaded_file.name}")
-    st.sidebar.info(f"📊 Size: {len(st.session_state.uploaded_file_content) / 1024:.1f} KB")
-
-# Sample data info
-if uploaded_file is None:
-    st.sidebar.info("💡 **Need test data?**")
-    st.sidebar.markdown("""
-    Use the synthetic data generator:
-    ```bash
-    python synthetic_data_generator.py \\
-      --scenario growth --weeks 4 \\
-      --output test_data.csv
-    ```
-    
-    **Available scenarios:**
-    - `growth`: +12% growth
-    - `decline`: -8% decline  
-    - `mixed`: Mixed performance
-    - `promotional`: Heavy promos
-    - `normal`: Baseline data
-    """)
-
-st.sidebar.markdown("---")
-
-run_analysis = st.sidebar.button("🚀 Run Executive Review", type="primary", use_container_width=True)
-
-# Add help section
-with st.sidebar.expander("ℹ️ How to Use"):
-    st.markdown("""
-    **Step 1:** Upload your CSV file
-    
-    **Step 2:** Click "Run Executive Review"
-    
-    **Step 3:** View insights and charts
-    
-    **Step 4:** Ask natural language questions
-    
-    **Required CSV columns:**
-    - Date, Store, Country, Channel
-    - Revenue, Units Sold, etc.
-    """)
+st.markdown("<br>", unsafe_allow_html=True)
 
 # -----------------------------
-# Main Execution with Enhanced Error Handling
+# Main Execution
 # -----------------------------
 if uploaded_file and run_analysis:
-
-    with st.spinner("🔄 Running executive review... This may take 30-60 seconds."):
+    
+    with st.spinner("🔄 Analyzing your data with AI... This may take 30-60 seconds"):
         
         try:
-            # Reset file pointer
             uploaded_file.seek(0)
             
             response = requests.post(
                 FASTAPI_URL_FULL,
                 files={"file": uploaded_file},
-                timeout=300  # 2 minute timeout
+                timeout=300
             )
             
-            # Check response status
             if response.status_code != 200:
-                st.error("❌ Failed to process data via FastAPI.")
-                
-                # Show detailed error
+                st.error("❌ Analysis Failed")
                 with st.expander("🔍 Error Details"):
                     st.code(response.text[:1000])
-                
-                # Troubleshooting tips
-                st.error("**Troubleshooting Tips:**")
                 st.markdown("""
-                1. **Check if FastAPI is running:**
-                   ```bash
-                   uvicorn api.main:app --reload
-                   ```
-                
-                2. **Verify your API key is set:**
-                   ```bash
-                   echo $env:OPENAI_API_KEY  # PowerShell
-                   ```
-                
-                3. **Check the FastAPI terminal for error messages**
-                
-                4. **Try restarting both servers**
+                **Troubleshooting Tips:**
+                1. Check if OpenAI API key is set in Render dashboard
+                2. Verify CSV format is correct
+                3. Check backend logs in Render
                 """)
                 st.stop()
         
         except requests.exceptions.Timeout:
-            st.error("⏱️ Request timed out (exceeded 2 minutes)")
+            st.error("⏱️ Request Timeout (exceeded 5 minutes)")
             st.warning("This might happen with very large datasets or slow API responses.")
             st.info("**Try these solutions:**")
             st.markdown("""
             - Use a smaller dataset (< 50,000 rows)
-            - Check your internet connection (for OpenAI API calls)
+            - Check your internet connection
             - Verify OpenAI API credits are available
-            - Restart the FastAPI server
             """)
             st.stop()
             
         except requests.exceptions.ConnectionError:
-            st.error("🔌 Cannot connect to FastAPI backend")
-            st.error("**FastAPI is not running or not accessible**")
-            
-            st.info("**To start FastAPI:**")
-            st.code("""
-# In a new terminal:
-cd C:\\Users\\vasuk\\OneDrive\\Desktop\\FirstSource
-
-# Set API key (PowerShell):
-$env:OPENAI_API_KEY="your-key-here"
-
-# Start server:
-python -m uvicorn api.main:app --reload
-            """, language="bash")
-            
-            st.info("Then refresh this page and try again.")
+            st.error("🔌 Cannot Connect to Backend")
+            st.error(f"**API URL:** {FASTAPI_BASE_URL}")
+            st.info("**Possible issues:**")
+            st.markdown("""
+            - Backend service is starting up (wait 2-3 minutes)
+            - Backend deployment failed (check Render logs)
+            - Network connectivity issue
+            """)
             st.stop()
             
         except Exception as e:
-            st.error(f"❌ Unexpected error occurred")
-            
+            st.error(f"❌ Unexpected Error")
             with st.expander("🔍 Technical Details"):
                 st.code(str(e))
-            
             st.warning("**Possible causes:**")
             st.markdown("""
             - Invalid CSV format
@@ -210,125 +495,142 @@ python -m uvicorn api.main:app --reload
             """)
             st.stop()
 
-    # Store analysis data in session state
     st.session_state.analysis_data = response.json()
-    st.success("✅ Analysis complete!")
+    st.success("✅ Analysis Complete! Scroll down to view insights.")
+    st.balloons()
 
-# Display analysis if available in session state
+# -----------------------------
+# Display Results
+# -----------------------------
 if st.session_state.analysis_data is not None:
     
     data = st.session_state.analysis_data
 
-    # =============================
-    # 1. Executive Summary
-    # =============================
-    st.subheader("🧠 Executive Judgment")
-    st.write(data["executive_summary"])
+    # Executive Summary
+    st.markdown("<h2>🧠 Executive Judgment</h2>", unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class='executive-summary animate-fade-in'>
+        <p style='font-size: 1.1rem; line-height: 1.8; color: #2D3748;'>
+            {data["executive_summary"]}
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.markdown("---")
+    st.markdown("<hr>", unsafe_allow_html=True)
 
-    # =============================
-    # 2. Key Business Signals
-    # =============================
-    st.subheader("📌 Key Business Signals")
-
+    # Key Business Signals
+    st.markdown("<h2>📌 Key Business Signals</h2>", unsafe_allow_html=True)
+    
     overall = data["metrics"]
-
+    
     col1, col2, col3 = st.columns(3)
     
-    # Revenue WoW with color
     wow_pct = overall['wow_pct']
     col1.metric(
-        "Revenue WoW %", 
+        "Revenue WoW", 
         f"{wow_pct:+.1f}%",
         delta=f"{wow_pct:.1f}%",
         delta_color="normal"
     )
     
-    # Trend direction with emoji
     direction = overall["direction"].capitalize()
     direction_emoji = "📈" if direction == "Increase" else "📉"
     col2.metric("Trend Direction", f"{direction_emoji} {direction}")
     
-    # Severity with color
     severity = overall["severity"].capitalize()
     severity_emoji = "🔴" if severity == "Significant" else "🟡" if severity == "Moderate" else "🟢"
-    col3.metric("Severity", f"{severity_emoji} {severity}")
+    col3.metric("Severity Level", f"{severity_emoji} {severity}")
 
-    st.markdown("---")
+    st.markdown("<hr>", unsafe_allow_html=True)
 
-    # =============================
-    # 3. Weekly Revenue Trend
-    # =============================
-    st.subheader("📈 Weekly Revenue Trend")
-
-    weekly_total_df = pd.DataFrame(
-        data["trends"]["weekly_total"]
-    )
-
+    # Weekly Revenue Trend
+    st.markdown("<h2>📈 Weekly Revenue Trend</h2>", unsafe_allow_html=True)
+    
+    weekly_total_df = pd.DataFrame(data["trends"]["weekly_total"])
+    
     fig_rev = plot_weekly_revenue(
         weekly_total=weekly_total_df,
         anomaly_result=data["anomalies"]["overall_anomaly"]
     )
-
+    
+    # Update chart styling for premium look
+    fig_rev.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font=dict(family="Inter, sans-serif", size=12, color="#2D3748"),
+        hovermode='x unified',
+        hoverlabel=dict(
+            bgcolor="white",
+            font_size=12,
+            font_family="Inter"
+        )
+    )
+    
+    st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
     st.plotly_chart(fig_rev, use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown("---")
+    st.markdown("<hr>", unsafe_allow_html=True)
 
-    # =============================
-    # 4. Performance Drivers
-    # =============================
-    st.subheader("🔍 Performance Drivers")
+    # Performance Drivers
+    st.markdown("<h2>🔍 Performance Drivers</h2>", unsafe_allow_html=True)
 
     col_left, col_right = st.columns(2)
 
     with col_left:
-        st.markdown("**🌍 Country-Level Impact**")
+        st.markdown("### 🌍 Regional Performance")
         fig_country = plot_country_drivers(
             country_trends=data["trends"]["country_trends"],
             anomaly_results=data["anomalies"]
         )
+        fig_country.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(family="Inter, sans-serif", color="#2D3748")
+        )
+        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
         st.plotly_chart(fig_country, use_container_width=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
     with col_right:
-        st.markdown("**📺 Channel-Level Impact**")
+        st.markdown("### 📺 Channel Performance")
         fig_channel = plot_channel_trends(
             channel_trends=data["trends"]["channel_trends"]
         )
+        fig_channel.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(family="Inter, sans-serif", color="#2D3748")
+        )
+        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
         st.plotly_chart(fig_channel, use_container_width=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown("---")
+    st.markdown("<hr>", unsafe_allow_html=True)
 
-    # =============================
-    # 5. NATURAL LANGUAGE QUERY SECTION
-    # =============================
-    st.subheader("💬 Ask Questions About Your Data")
-    st.caption("Try natural language queries to explore insights interactively")
+    # Natural Language Query Section
+    st.markdown("<h2>💬 Ask Questions About Your Data</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #718096; margin-bottom: 1.5rem;'>Use natural language to explore insights interactively</p>", unsafe_allow_html=True)
 
-    # Query input
     user_question = st.text_input(
-        "Ask me anything:",
-        placeholder="e.g., Which region performed best? or Show me top 5 stores by total sales",
-        key="nl_query_input"
+        "Your Question",
+        placeholder="e.g., Which region performed best? or Show me top 5 stores by revenue",
+        label_visibility="collapsed"
     )
 
-    # Ask button
-    col_ask, col_example = st.columns([1, 4])
+    col_ask, col_spacer = st.columns([1, 3])
     
     with col_ask:
-        ask_button = st.button("🔍 Ask", key="ask_button", type="primary")
+        ask_button = st.button("🔍 Ask Question", use_container_width=True)
 
     if ask_button and user_question:
         with st.spinner("🤔 Analyzing your question..."):
             
             try:
-                # Use stored file content from session state
                 if st.session_state.uploaded_file_content is not None:
                     
-                    # Create file-like object from stored content
                     file_bytes = io.BytesIO(st.session_state.uploaded_file_content)
                     
-                    # Call query endpoint
                     query_response = requests.post(
                         FASTAPI_URL_QUERY,
                         files={"file": ("data.csv", file_bytes, "text/csv")},
@@ -339,33 +641,31 @@ if st.session_state.analysis_data is not None:
                     if query_response.status_code == 200:
                         result = query_response.json()
                         
-                        # Check if query was successful
                         if not result.get("success", True):
                             st.error(f"❌ Query failed: {result.get('answer', 'Unknown error')}")
                         else:
-                            # Display answer in a nice box
-                            st.success("✨ **Answer:**")
+                            st.markdown("""
+                            <div class='executive-summary animate-fade-in'>
+                                <h3 style='color: #667eea; margin-bottom: 1rem;'>✨ Answer</h3>
+                            """, unsafe_allow_html=True)
                             st.markdown(result["answer"])
+                            st.markdown("</div>", unsafe_allow_html=True)
                             
-                            # Show generated code if available (for custom queries)
                             if result.get("code_generated"):
                                 with st.expander("🔧 Generated Code (for transparency)"):
                                     st.code(result["code_generated"], language="python")
                             
-                            # Show key insights
                             if result.get("key_insights"):
                                 st.markdown("**📊 Key Findings:**")
                                 for insight in result["key_insights"]:
                                     st.markdown(f"- {insight}")
                             
-                            # Render suggested visualization
                             chart_type = result.get("chart_suggestion")
                             data_result = result.get("data")
                             
                             if data_result and isinstance(data_result, list) and len(data_result) > 0:
                                 df_viz = pd.DataFrame(data_result)
                                 
-                                # Smart chart rendering based on data structure
                                 if chart_type == "bar":
                                     if "Country" in df_viz.columns and "wow_pct" in df_viz.columns:
                                         fig = px.bar(
@@ -377,7 +677,14 @@ if st.session_state.analysis_data is not None:
                                             color="wow_pct",
                                             color_continuous_scale="RdYlGn"
                                         )
+                                        fig.update_layout(
+                                            plot_bgcolor='rgba(0,0,0,0)',
+                                            paper_bgcolor='rgba(0,0,0,0)',
+                                            font=dict(family="Inter")
+                                        )
+                                        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
                                         st.plotly_chart(fig, use_container_width=True)
+                                        st.markdown("</div>", unsafe_allow_html=True)
                                     elif "Channel" in df_viz.columns and "wow_pct" in df_viz.columns:
                                         fig = px.bar(
                                             df_viz, 
@@ -388,19 +695,23 @@ if st.session_state.analysis_data is not None:
                                             color="wow_pct",
                                             color_continuous_scale="RdYlGn"
                                         )
+                                        fig.update_layout(
+                                            plot_bgcolor='rgba(0,0,0,0)',
+                                            paper_bgcolor='rgba(0,0,0,0)',
+                                            font=dict(family="Inter")
+                                        )
+                                        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
                                         st.plotly_chart(fig, use_container_width=True)
+                                        st.markdown("</div>", unsafe_allow_html=True)
                                     else:
-                                        # Generic bar chart
                                         st.dataframe(df_viz, use_container_width=True)
                                 
                                 elif chart_type == "table":
                                     st.dataframe(df_viz, use_container_width=True)
                                 
                                 elif data_result and not isinstance(data_result, list):
-                                    # Scalar result
                                     st.metric("Result", f"{data_result:,.2f}" if isinstance(data_result, (int, float)) else data_result)
                             
-                            # Show follow-up questions as clickable suggestions
                             if result.get("follow_up_questions"):
                                 st.markdown("**💡 You might also want to ask:**")
                                 for fq in result["follow_up_questions"]:
@@ -418,14 +729,13 @@ if st.session_state.analysis_data is not None:
                 
             except requests.exceptions.ConnectionError:
                 st.error("🔌 Cannot connect to FastAPI")
-                st.info("Make sure FastAPI is running: `uvicorn api.main:app --reload`")
+                st.info(f"Make sure API is accessible at: {FASTAPI_BASE_URL}")
                 
             except Exception as e:
                 st.error(f"❌ Query error: {str(e)}")
 
-    # Show example queries in an expander
+    # Example Questions - COMPLETE VERSION WITH ALL YOUR QUESTIONS
     with st.expander("💡 Example Questions You Can Ask"):
-        
         tab1, tab2 = st.tabs(["📊 Pre-Computed Analytics", "🔍 Custom Exploration"])
         
         with tab1:
@@ -494,83 +804,75 @@ if st.session_state.analysis_data is not None:
             """)
 
 else:
-    # =============================
-    # Landing Page (No Data Uploaded)
-    # =============================
+    # Landing Page
+    st.markdown("""
+    <div class='info-box animate-fade-in'>
+        <h3 style='color: #667eea; margin-top: 0;'>👋 Welcome to AI Data-to-Insight Agent</h3>
+        <p style='color: #4A5568; font-size: 1.1rem; line-height: 1.8;'>
+            Upload your CSV file and click <strong>"Run Executive Review"</strong> to generate AI-powered insights.
+            This tool automatically analyzes your data, detects anomalies, and provides actionable recommendations.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    st.info("👆 Upload a CSV file and click **Run Executive Review** to generate insights.")
-    
-    # Feature showcase
-    st.markdown("---")
-    st.subheader("🎯 What This Agent Can Do")
+    st.markdown("<h2>🎯 Platform Capabilities</h2>", unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
-        ### 📊 **Automated Analytics**
-        - Weekly revenue trends
-        - Regional performance tracking
-        - Channel-level insights
-        - Promotion impact analysis
-        
-        ### 🔍 **Anomaly Detection**
-        - Z-score based detection
-        - Statistical validation
-        - Automatic alerting
-        """)
+        <div class='chart-container'>
+            <h3 style='color: #667eea;'>📊 Automated Analytics</h3>
+            <ul style='color: #4A5568; line-height: 2;'>
+                <li>Weekly revenue trends</li>
+                <li>Regional performance tracking</li>
+                <li>Channel-level insights</li>
+                <li>Promotion impact analysis</li>
+            </ul>
+            
+            <h3 style='color: #667eea; margin-top: 1.5rem;'>🔍 Anomaly Detection</h3>
+            <ul style='color: #4A5568; line-height: 2;'>
+                <li>Z-score based detection</li>
+                <li>Statistical validation</li>
+                <li>Automatic alerting</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
-        ### 💬 **Natural Language Queries**
-        - Pre-computed insights
-        - Custom data exploration
-        - AI-powered code generation
-        - Interactive Q&A
-        
-        ### 🧠 **AI-Powered Insights**
-        - Executive summaries
-        - Business recommendations
-        - Action prioritization
-        """)
-    
-    # Sample query showcase
-    st.markdown("---")
-    st.subheader("💬 Natural Language Query Feature")
-    st.caption("After uploading data, you'll be able to ask questions like:")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("**📊 Pre-Computed Analytics:**")
-        st.code("""
-• Which region performed best?
-• Show me channel trends
-• Are there any anomalies?
-• How are promotions performing?
-        """)
-    
-    with col2:
-        st.markdown("**🔍 Custom Data Exploration:**")
-        st.code("""
-• Top 5 stores by total sales
-• Average revenue by country
-• Sales where discount > 30%
-• Total revenue from Walmart
-        """)
+        <div class='chart-container'>
+            <h3 style='color: #667eea;'>💬 Natural Language Queries</h3>
+            <ul style='color: #4A5568; line-height: 2;'>
+                <li>Pre-computed insights</li>
+                <li>Custom data exploration</li>
+                <li>AI-powered code generation</li>
+                <li>Interactive Q&A</li>
+            </ul>
+            
+            <h3 style='color: #667eea; margin-top: 1.5rem;'>🧠 AI-Powered Insights</h3>
+            <ul style='color: #4A5568; line-height: 2;'>
+                <li>Executive summaries</li>
+                <li>Business recommendations</li>
+                <li>Action prioritization</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
 
-# -----------------------------
 # Footer
-# -----------------------------
-st.markdown("---")
 st.markdown("""
-<div style='text-align: center; color: #666; padding: 20px;'>
-    <p><strong>AI Data-to-Insight Agent</strong> | Built with Streamlit, FastAPI & OpenAI GPT-4</p>
-    <p style='font-size: 0.9em;'>
-        Features: Pre-computed Analytics • Custom Data Exploration • Anomaly Detection • Natural Language Queries
+<div class='footer'>
+    <h3 style='color: #667eea; margin-bottom: 1rem;'>AI Data-to-Insight Agent</h3>
+    <p style='color: #718096;'>
+        Built with FastAPI, Streamlit & OpenAI GPT-4 | 
+        <strong>Production-Ready Architecture</strong> | 
+        Zero Infrastructure Cost
     </p>
-    <p style='font-size: 0.8em; margin-top: 10px;'>
-        💡 Powered by AI • 📊 Production-Ready Architecture • 🔒 Secure by Design
+    <p style='color: #A0AEC0; font-size: 0.9rem; margin-top: 0.5rem;'>
+        🚀 Deployed on Cloud • 📊 Enterprise-Grade • 🔒 Secure by Design
+    </p>
+    <p style='color: #CBD5E0; font-size: 0.85rem; margin-top: 1rem;'>
+        © 2026 FirstSource POC | Version 1.0
     </p>
 </div>
 """, unsafe_allow_html=True)
