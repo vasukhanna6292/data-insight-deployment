@@ -44,7 +44,7 @@ if "uploaded_file_content" not in st.session_state:
 # -----------------------------
 # Header with Feature Badges
 # -----------------------------
-st.title("📊 AI Data-to-Insight Agent")
+st.title("AI Data-to-Insight Agent")
 st.caption("Weekly Executive Performance Review (Automated)")
 
 # Feature badges
