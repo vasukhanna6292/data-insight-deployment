@@ -5,7 +5,7 @@ import pandas as pd
 import requests
 import plotly.express as px
 import io
-
+import os
 # -----------------------------
 # Page Configuration
 # -----------------------------
@@ -24,8 +24,13 @@ from viz.charts import (
     plot_channel_trends
 )
 
-FASTAPI_URL_FULL = "http://127.0.0.1:8000/review/full"
-FASTAPI_URL_QUERY = "http://127.0.0.1:8000/review/query"
+# UPDATED: Use environment variable for API URL (cloud deployment)
+FASTAPI_BASE_URL = os.getenv("FASTAPI_BASE_URL", "http://127.0.0.1:8000")
+FASTAPI_URL_FULL = f"{FASTAPI_BASE_URL}/review/full"
+FASTAPI_URL_QUERY = f"{FASTAPI_BASE_URL}/review/query"
+
+# Display API URL in sidebar for debugging
+st.sidebar.caption(f"🔗 API: {FASTAPI_BASE_URL}")
 
 # -----------------------------
 # Initialize Session State
