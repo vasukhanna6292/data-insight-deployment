@@ -1,4 +1,4 @@
-# app.py - PREMIUM ENTERPRISE UI - FULL VERSION
+# app.py - PREMIUM ENTERPRISE UI
 
 import streamlit as st
 import pandas as pd
@@ -84,10 +84,6 @@ st.markdown("""
         color: #ffffff !important;
     }
     
-    [data-testid="stSidebar"] .stMarkdown {
-        color: #ffffff !important;
-    }
-    
     /* Feature Badges */
     .feature-badge {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -157,16 +153,16 @@ st.markdown("""
     
     /* File Uploader */
     [data-testid="stFileUploader"] {
-        background: rgba(255, 255, 255, 0.1);
+        background: white;
         padding: 2rem;
         border-radius: 15px;
-        border: 2px dashed rgba(255, 255, 255, 0.3);
+        border: 2px dashed #667eea;
         transition: all 0.3s ease;
     }
     
     [data-testid="stFileUploader"]:hover {
-        border-color: rgba(255, 255, 255, 0.5);
-        background: rgba(255, 255, 255, 0.15);
+        border-color: #764ba2;
+        background: rgba(102, 126, 234, 0.05);
     }
     
     /* Text Input */
@@ -216,7 +212,6 @@ st.markdown("""
     /* Tabs */
     .stTabs [data-baseweb="tab-list"] {
         gap: 1rem;
-        background: transparent;
     }
     
     .stTabs [data-baseweb="tab"] {
@@ -226,20 +221,12 @@ st.markdown("""
         font-weight: 600;
         border: 2px solid #E2E8F0;
         transition: all 0.3s ease;
-        color: #2D3748;
     }
     
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white !important;
+        color: white;
         border-color: transparent;
-    }
-    
-    /* Dataframe */
-    [data-testid="stDataFrame"] {
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
     
     /* Loading Spinner */
@@ -319,12 +306,6 @@ st.markdown("""
     .pulse {
         animation: pulse 2s infinite;
     }
-    
-    /* Code blocks */
-    .stCodeBlock {
-        border-radius: 12px;
-        background: #1a1a2e !important;
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -361,7 +342,7 @@ with st.sidebar:
     # API Status Indicator
     st.markdown(f"""
     <div style='background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;'>
-        <small style='color: #a0aec0;'>🔗 API Endpoint</small><br>
+        <small>🔗 API Endpoint</small><br>
         <code style='color: #10b981; font-size: 0.75rem;'>{FASTAPI_BASE_URL}</code>
     </div>
     """, unsafe_allow_html=True)
@@ -452,47 +433,22 @@ if uploaded_file and run_analysis:
                 st.error("❌ Analysis Failed")
                 with st.expander("🔍 Error Details"):
                     st.code(response.text[:1000])
-                st.markdown("""
-                **Troubleshooting Tips:**
-                1. Check if OpenAI API key is set in Render dashboard
-                2. Verify CSV format is correct
-                3. Check backend logs in Render
-                """)
                 st.stop()
         
         except requests.exceptions.Timeout:
-            st.error("⏱️ Request Timeout (exceeded 5 minutes)")
-            st.warning("This might happen with very large datasets or slow API responses.")
-            st.info("**Try these solutions:**")
-            st.markdown("""
-            - Use a smaller dataset (< 50,000 rows)
-            - Check your internet connection
-            - Verify OpenAI API credits are available
-            """)
+            st.error("⏱️ Request Timeout")
+            st.warning("Try with a smaller dataset or check your connection.")
             st.stop()
             
         except requests.exceptions.ConnectionError:
             st.error("🔌 Cannot Connect to Backend")
-            st.error(f"**API URL:** {FASTAPI_BASE_URL}")
-            st.info("**Possible issues:**")
-            st.markdown("""
-            - Backend service is starting up (wait 2-3 minutes)
-            - Backend deployment failed (check Render logs)
-            - Network connectivity issue
-            """)
+            st.info(f"**API URL:** {FASTAPI_BASE_URL}")
             st.stop()
             
         except Exception as e:
             st.error(f"❌ Unexpected Error")
-            with st.expander("🔍 Technical Details"):
+            with st.expander("🔍 Details"):
                 st.code(str(e))
-            st.warning("**Possible causes:**")
-            st.markdown("""
-            - Invalid CSV format
-            - Missing required columns
-            - Data type issues
-            - OpenAI API errors
-            """)
             st.stop()
 
     st.session_state.analysis_data = response.json()
@@ -652,7 +608,7 @@ if st.session_state.analysis_data is not None:
                             st.markdown("</div>", unsafe_allow_html=True)
                             
                             if result.get("code_generated"):
-                                with st.expander("🔧 Generated Code (for transparency)"):
+                                with st.expander("🔧 Generated Code"):
                                     st.code(result["code_generated"], language="python")
                             
                             if result.get("key_insights"):
@@ -682,125 +638,46 @@ if st.session_state.analysis_data is not None:
                                             paper_bgcolor='rgba(0,0,0,0)',
                                             font=dict(family="Inter")
                                         )
-                                        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
                                         st.plotly_chart(fig, use_container_width=True)
-                                        st.markdown("</div>", unsafe_allow_html=True)
-                                    elif "Channel" in df_viz.columns and "wow_pct" in df_viz.columns:
-                                        fig = px.bar(
-                                            df_viz, 
-                                            x="Channel", 
-                                            y="wow_pct",
-                                            title="Channel Performance",
-                                            labels={"wow_pct": "WoW % Change"},
-                                            color="wow_pct",
-                                            color_continuous_scale="RdYlGn"
-                                        )
-                                        fig.update_layout(
-                                            plot_bgcolor='rgba(0,0,0,0)',
-                                            paper_bgcolor='rgba(0,0,0,0)',
-                                            font=dict(family="Inter")
-                                        )
-                                        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
-                                        st.plotly_chart(fig, use_container_width=True)
-                                        st.markdown("</div>", unsafe_allow_html=True)
                                     else:
                                         st.dataframe(df_viz, use_container_width=True)
                                 
                                 elif chart_type == "table":
                                     st.dataframe(df_viz, use_container_width=True)
-                                
-                                elif data_result and not isinstance(data_result, list):
-                                    st.metric("Result", f"{data_result:,.2f}" if isinstance(data_result, (int, float)) else data_result)
                             
                             if result.get("follow_up_questions"):
-                                st.markdown("**💡 You might also want to ask:**")
+                                st.markdown("**💡 Related Questions:**")
                                 for fq in result["follow_up_questions"]:
                                     st.markdown(f"- {fq}")
                     else:
-                        st.error(f"❌ Failed to process query (Status: {query_response.status_code})")
-                        with st.expander("Error details"):
-                            st.code(query_response.text[:500])
+                        st.error(f"❌ Failed to process query")
                 else:
-                    st.error("❌ No file data found. Please upload a file first.")
+                    st.error("❌ No file uploaded")
                     
-            except requests.exceptions.Timeout:
-                st.error("⏱️ Query timed out")
-                st.info("Try a simpler query or check your API connection.")
-                
-            except requests.exceptions.ConnectionError:
-                st.error("🔌 Cannot connect to FastAPI")
-                st.info(f"Make sure API is accessible at: {FASTAPI_BASE_URL}")
-                
             except Exception as e:
                 st.error(f"❌ Query error: {str(e)}")
 
-    # Example Questions - COMPLETE VERSION WITH ALL YOUR QUESTIONS
-    with st.expander("💡 Example Questions You Can Ask"):
-        tab1, tab2 = st.tabs(["📊 Pre-Computed Analytics", "🔍 Custom Exploration"])
+    # Example Questions
+    with st.expander("💡 Example Questions"):
+        tab1, tab2 = st.tabs(["📊 Pre-Computed", "🔍 Custom Queries"])
         
         with tab1:
             st.markdown("""
-            **Regional Performance:**
             - Which region performed best last week?
             - Show me country performance comparison
-            - What's the top performing country?
-            
-            **Channel Performance:**
             - Which channel is growing fastest?
-            - Compare online vs retail performance
-            - Show channel breakdown
-            
-            **Revenue Trends:**
             - What's the overall revenue trend?
-            - Is revenue growing or declining?
-            - Show me week over week change
-            
-            **Anomaly Detection:**
             - Are there any anomalies in the data?
-            - Which regions show unusual behavior?
-            - Detect any outliers
-            
-            **Promotions:**
             - How are promotions performing?
-            - Show me promo effectiveness
-            - Compare promoted vs non-promoted sales
-            
-            **Pricing & Demand:**
-            - What's happening with pricing?
-            - Show unit price trends
-            - Is demand increasing or decreasing?
             """)
         
         with tab2:
             st.markdown("""
-            **Aggregations:**
-            - What's the average revenue by country?
-            - Calculate total revenue by channel
-            - Show me average margin by store
-            - What's the sum of units sold by SKU?
-            
-            **Top/Bottom Queries:**
             - Show me top 5 stores by total sales
-            - Top 10 countries by revenue
-            - Bottom 3 channels by performance
-            - Which are the top 5 SKUs by margin?
-            
-            **Filtering:**
-            - Show me sales where discount > 30%
-            - Filter sales from USA only
-            - Sales with margin greater than 35%
-            - Show me Walmart store performance only
-            
-            **Specific Calculations:**
+            - What's the average revenue by country?
+            - Filter sales where discount > 30%
             - Total revenue from Walmart stores
-            - Average discount by channel
-            - How many unique stores are there?
-            - What's the total revenue from Diwali Promo?
-            
-            **Complex Queries:**
-            - Top 5 stores in USA by revenue
             - Average margin for Online channel only
-            - Revenue by SKU sorted by units sold
             """)
 
 else:
